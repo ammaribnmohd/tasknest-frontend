@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 import { Task, TaskRequest, TaskStatus } from '../models/task.model';
 
 @Injectable({
@@ -8,7 +9,7 @@ import { Task, TaskRequest, TaskStatus } from '../models/task.model';
 })
 export class TaskApiService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:8080/api/tasks';
+  private readonly apiUrl = `${environment.apiUrl}/tasks`;
 
   getAllTasks(): Observable<Task[]> {
     return this.http.get<Task[]>(this.apiUrl);

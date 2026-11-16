@@ -42,3 +42,10 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Local secrets (environment.ts / environment.development.ts contain no secrets and MUST be committed)
+.env
+.env.*
+
+# Vercel CLI local project link
+.vercel
