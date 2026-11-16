@@ -1,0 +1,58 @@
+<header class="page-header">
+  <div class="title-row">
+    <i class="pi pi-cog title-icon" aria-hidden="true"></i>
+    <h1>Settings</h1>
+  </div>
+  <p class="subtitle">Customize how Taskflow looks and behaves. Colors and fonts are configured in <code>theme.config.ts</code>.</p>
+</header>
+
+<section class="settings-card" aria-label="Preferences">
+  <div class="setting-item">
+    <div class="setting-info">
+      <label for="pref-dark">Dark theme</label>
+      <span>Switch between light and dark surface palettes.</span>
+    </div>
+    <p-toggleswitch
+      inputId="pref-dark"
+      [ngModel]="state.isDarkMode()"
+      (ngModelChange)="state.setDarkMode($event)"
+    />
+  </div>
+
+  <div class="setting-item">
+    <div class="setting-info">
+      <label for="pref-completed">Include completed in active views</label>
+      <span>Show finished tasks inside Inbox, Today and Upcoming.</span>
+    </div>
+    <p-toggleswitch
+      inputId="pref-completed"
+      [ngModel]="state.showCompletedInViews()"
+      (ngModelChange)="state.setShowCompletedInViews($event)"
+    />
+  </div>
+
+  <div class="setting-item">
+    <div class="setting-info">
+      <label for="pref-compact">Compact task density</label>
+      <span>Reduce row padding and hide task descriptions.</span>
+    </div>
+    <p-toggleswitch
+      inputId="pref-compact"
+      [ngModel]="state.compactDensity()"
+      (ngModelChange)="state.setCompactDensity($event)"
+    />
+  </div>
+
+  <div class="setting-item">
+    <div class="setting-info">
+      <label for="pref-sidebar">Collapse navigation sidebar</label>
+      <span>Show an icon-only navigation rail with tooltips.</span>
+    </div>
+    <p-toggleswitch
+      inputId="pref-sidebar"
+      [ngModel]="state.isSidebarCollapsed()"
+      (ngModelChange)="state.toggleSidebarCollapsed()"
+    />
+  </div>
+</section>
+

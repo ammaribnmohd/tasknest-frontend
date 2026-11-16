@@ -1,0 +1,24 @@
+<div class="workspace-layout">
+  <app-sidebar />
+
+  <div class="workspace-main">
+    <div class="mobile-topbar">
+      <p-button
+        icon="pi pi-bars"
+        [outlined]="true"
+        severity="secondary"
+        size="small"
+        ariaLabel="Open navigation menu"
+        (onClick)="state.isSidebarOpenMobile.set(true)"
+      />
+      <span class="mobile-brand">Taskflow</span>
+    </div>
+
+    <router-outlet />
+  </div>
+</div>
+
+<app-task-modal />
+<p-confirmdialog />
+<p-toast position="bottom-right" />
+

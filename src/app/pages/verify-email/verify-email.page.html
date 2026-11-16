@@ -1,0 +1,89 @@
+<div class="auth-page-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="brand-badge">
+        <i class="pi pi-envelope"></i>
+      </div>
+      <h1 class="auth-title">Verify your email</h1>
+      <p class="auth-subtitle">We sent a 6-digit code to your inbox</p>
+    </div>
+
+    @if (errorMessage()) {
+      <div class="auth-alert error-alert" role="alert">
+        <i class="pi pi-exclamation-circle"></i>
+        <span>{{ errorMessage() }}</span>
+      </div>
+    }
+
+    @if (successMessage()) {
+      <div class="auth-alert success-alert" role="alert">
+        <i class="pi pi-check-circle"></i>
+        <span>{{ successMessage() }}</span>
+      </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form" novalidate>
+      <div class="field-group">
+        <label for="email" class="field-label">Email address</label>
+        <input
+          pInputText
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="name@example.com"
+          class="auth-input"
+          [class.ng-invalid]="form.controls.email.invalid && form.controls.email.touched"
+        />
+      </div>
+
+      <div class="field-group otp-group">
+        <label class="field-label">6-digit verification code</label>
+        <div class="otp-container">
+          <p-inputotp
+            formControlName="otp"
+            [length]="6"
+            [integerOnly]="true"
+            styleClass="auth-otp-input"
+          />
+        </div>
+        @if (form.controls.otp.invalid && form.controls.otp.touched) {
+          <small class="field-error text-center">Please enter all 6 digits</small>
+        }
+      </div>
+
+      <button
+        pButton
+        type="submit"
+        label="Verify and Continue"
+        icon="pi pi-check"
+        iconPos="right"
+        [loading]="isLoading()"
+        class="auth-submit-btn"
+      ></button>
+    </form>
+
+    <div class="resend-section">
+      @if (cooldownRemaining() > 0) {
+        <span class="cooldown-text">
+          Resend code in <strong>{{ cooldownRemaining() }}s</strong>
+        </span>
+      } @else {
+        <button
+          pButton
+          type="button"
+          label="Resend Verification Code"
+          variant="link"
+          [loading]="isResending()"
+          (click)="resendCode()"
+          class="resend-btn"
+        ></button>
+      }
+    </div>
+
+    <div class="auth-footer">
+      <span>Wrong email?</span>
+      <a routerLink="/register" class="auth-text-link">Change address</a>
+    </div>
+  </div>
+</div>
+

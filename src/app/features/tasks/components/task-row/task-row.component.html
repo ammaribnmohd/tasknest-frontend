@@ -1,0 +1,93 @@
+<div
+  class="task-row"
+  [class.completed]="isCompleted"
+  [class.overdue]="isOverdue"
+  [class.compact]="compact"
+  (dblclick)="edit.emit(task)"
+>
+  <div class="check-col" (click)="$event.stopPropagation()">
+    <p-checkbox
+      [binary]="true"
+      [ngModel]="isCompleted"
+      (ngModelChange)="toggleComplete.emit(task)"
+      [ariaLabel]="isCompleted ? 'Reopen task: ' + task.title : 'Complete task: ' + task.title"
+    />
+  </div>
+
+  <div class="task-body" (click)="edit.emit(task)">
+    <div class="title-line">
+      <span class="task-title">{{ task.title }}</span>
+    </div>
+
+    @if (task.description && !compact) {
+      <p class="task-description">{{ task.description }}</p>
+    }
+  </div>
+
+  <div class="task-meta">
+    @if (task.dueDate) {
+      <span
+        class="due-badge"
+        [class.overdue]="isOverdue"
+        [class.today]="isDueToday && !isCompleted"
+        [pTooltip]="'Due ' + (task.dueDate | date:'medium')"
+        tooltipPosition="top"
+      >
+        <i class="pi pi-calendar" aria-hidden="true"></i>
+        @if (isOverdue) {
+          <span>Overdue · {{ task.dueDate | date:'MMM d' }}</span>
+        } @else if (isDueToday) {
+          <span>Today</span>
+        } @else if (isDueTomorrow) {
+          <span>Tomorrow</span>
+        } @else {
+          <span>{{ task.dueDate | date:'MMM d' }}</span>
+        }
+      </span>
+    }
+
+    <p-tag
+      [value]="priorityLabel"
+      [severity]="prioritySeverity"
+      [rounded]="true"
+    />
+
+    <button
+      type="button"
+      class="status-cycle-btn"
+      (click)="onCycleStatus($event)"
+      pTooltip="Click to cycle status (To Do → In Progress → Done)"
+      tooltipPosition="top"
+    >
+      <p-tag
+        [value]="statusLabel"
+        [severity]="statusSeverity"
+      />
+    </button>
+
+    <div class="row-actions" (click)="$event.stopPropagation()">
+      <p-button
+        icon="pi pi-pencil"
+        [rounded]="true"
+        [text]="true"
+        severity="secondary"
+        size="small"
+        pTooltip="Edit task"
+        tooltipPosition="top"
+        ariaLabel="Edit task"
+        (onClick)="edit.emit(task)"
+      />
+      <p-button
+        icon="pi pi-trash"
+        [rounded]="true"
+        [text]="true"
+        severity="danger"
+        size="small"
+        pTooltip="Delete task"
+        tooltipPosition="top"
+        ariaLabel="Delete task"
+        (onClick)="delete.emit({ task, event: $event })"
+      />
+    </div>
+  </div>
+</div>

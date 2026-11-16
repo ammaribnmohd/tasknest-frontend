@@ -1,0 +1,40 @@
+.workspace-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--bg-app);
+}
+
+.workspace-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  max-width: 1040px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 24px 32px 64px;
+}
+
+.mobile-topbar {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.mobile-brand {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+@media (max-width: 860px) {
+  .workspace-main {
+    padding: 16px 16px 48px;
+  }
+
+  .mobile-topbar {
+    display: flex;
+  }
+}
+

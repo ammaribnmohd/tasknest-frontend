@@ -1,0 +1,153 @@
+<p-dialog
+  [visible]="state.isTaskModalOpen()"
+  (visibleChange)="onVisibleChange($event)"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [closable]="true"
+  [closeOnEscape]="true"
+  [dismissableMask]="true"
+  [style]="{ width: '100%', maxWidth: '540px' }"
+  [breakpoints]="{ '640px': '95vw' }"
+  styleClass="taskflow-dialog"
+>
+  <ng-template #header>
+    <div class="dialog-header-content">
+      <h2 class="dialog-title">
+        {{ state.editingTask() ? 'Edit Task' : 'Create New Task' }}
+      </h2>
+      <p class="dialog-subtitle">
+        {{ state.editingTask() ? 'Update task details, status, or schedule.' : 'Add a new task to your Taskflow workspace.' }}
+      </p>
+    </div>
+  </ng-template>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" id="taskModalForm" class="dialog-form">
+    <!-- Title Field -->
+    <div class="form-field">
+      <div class="label-row">
+        <label for="task-title">Task Title <span class="required-mark">*</span></label>
+        <span class="char-counter">{{ form.controls.title.value.length }}/100</span>
+      </div>
+      <input
+        pInputText
+        id="task-title"
+        type="text"
+        formControlName="title"
+        placeholder="e.g., Finalize quarterly roadmap presentation"
+        maxlength="100"
+        class="w-full"
+        [invalid]="(form.controls.title.touched && form.controls.title.invalid) || !!state.validationErrors()['title']"
+      />
+      @if ((form.controls.title.touched && form.controls.title.errors?.['required']) || state.validationErrors()['title']) {
+        <p-message severity="error" size="small" variant="simple">
+          {{ state.validationErrors()['title'] || 'Task title is required.' }}
+        </p-message>
+      }
+    </div>
+
+    <!-- Description Field -->
+    <div class="form-field">
+      <div class="label-row">
+        <label for="task-desc">Description</label>
+        <span class="char-counter">{{ form.controls.description.value.length }}/500</span>
+      </div>
+      <textarea
+        pTextarea
+        id="task-desc"
+        formControlName="description"
+        rows="3"
+        placeholder="Add supporting context, acceptance criteria, or notes..."
+        maxlength="500"
+        class="w-full"
+      ></textarea>
+      @if (state.validationErrors()['description']) {
+        <p-message severity="error" size="small" variant="simple">
+          {{ state.validationErrors()['description'] }}
+        </p-message>
+      }
+    </div>
+
+    <!-- Status & Priority 2-Column Row -->
+    <div class="form-grid-2">
+      <div class="form-field">
+        <label for="task-status">Status</label>
+        <p-select
+          inputId="task-status"
+          formControlName="status"
+          [options]="statusOptions"
+          optionLabel="label"
+          optionValue="value"
+          appendTo="body"
+          styleClass="w-full"
+        />
+      </div>
+
+      <div class="form-field">
+        <label for="task-priority">Priority</label>
+        <p-select
+          inputId="task-priority"
+          formControlName="priority"
+          [options]="priorityOptions"
+          optionLabel="label"
+          optionValue="value"
+          appendTo="body"
+          styleClass="w-full"
+        />
+      </div>
+    </div>
+
+    <!-- Due Date Field + Quick Presets -->
+    <div class="form-field">
+      <div class="label-row">
+        <label for="task-due">Due Date & Time</label>
+        <div class="date-presets">
+          <button type="button" class="preset-chip" (click)="setQuickDue(0)">Today</button>
+          <button type="button" class="preset-chip" (click)="setQuickDue(1)">Tomorrow</button>
+          <button type="button" class="preset-chip" (click)="setQuickDue(7)">+7 Days</button>
+          @if (form.controls.dueDate.value) {
+            <button type="button" class="preset-chip clear" (click)="setQuickDue(null)">Clear</button>
+          }
+        </div>
+      </div>
+      <p-datepicker
+        inputId="task-due"
+        formControlName="dueDate"
+        [showTime]="true"
+        hourFormat="12"
+        [showIcon]="true"
+        iconDisplay="input"
+        [showButtonBar]="true"
+        placeholder="Select due date and time (optional)"
+        appendTo="body"
+        styleClass="w-full"
+      />
+    </div>
+
+    @if (state.apiError()) {
+      <p-message severity="error" size="small">
+        {{ state.apiError() }}
+      </p-message>
+    }
+  </form>
+
+  <ng-template #footer>
+    <div class="dialog-footer-bar">
+      <p-button
+        type="button"
+        label="Cancel"
+        severity="secondary"
+        [outlined]="true"
+        (onClick)="requestClose()"
+        [disabled]="state.submitting()"
+      />
+      <p-button
+        type="submit"
+        [label]="state.editingTask() ? 'Save Changes' : 'Create Task'"
+        icon="pi pi-check"
+        [loading]="state.submitting()"
+        (onClick)="onSubmit()"
+      />
+    </div>
+  </ng-template>
+</p-dialog>

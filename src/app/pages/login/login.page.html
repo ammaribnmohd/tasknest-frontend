@@ -1,0 +1,73 @@
+<div class="auth-page-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="brand-badge">
+        <i class="pi pi-check-square"></i>
+      </div>
+      <h1 class="auth-title">Welcome back</h1>
+      <p class="auth-subtitle">Sign in to your Taskflow workspace</p>
+    </div>
+
+    @if (errorMessage()) {
+      <div class="auth-alert error-alert" role="alert">
+        <i class="pi pi-exclamation-circle"></i>
+        <span>{{ errorMessage() }}</span>
+      </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form" novalidate>
+      <div class="field-group">
+        <label for="email" class="field-label">Email address</label>
+        <input
+          pInputText
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="name@example.com"
+          class="auth-input"
+          [class.ng-invalid]="form.controls.email.invalid && form.controls.email.touched"
+          autocomplete="email"
+        />
+        @if (form.controls.email.invalid && form.controls.email.touched) {
+          <small class="field-error">Enter a valid email address</small>
+        }
+      </div>
+
+      <div class="field-group">
+        <div class="field-label-row">
+          <label for="password" class="field-label">Password</label>
+          <a routerLink="/forgot-password" class="auth-text-link text-sm">Forgot password?</a>
+        </div>
+        <p-password
+          id="password"
+          formControlName="password"
+          [feedback]="false"
+          [toggleMask]="true"
+          placeholder="Enter your password"
+          styleClass="auth-password-wrapper"
+          inputStyleClass="auth-input"
+          autocomplete="current-password"
+        />
+        @if (form.controls.password.invalid && form.controls.password.touched) {
+          <small class="field-error">Password is required</small>
+        }
+      </div>
+
+      <button
+        pButton
+        type="submit"
+        label="Sign In"
+        icon="pi pi-arrow-right"
+        iconPos="right"
+        [loading]="isLoading()"
+        class="auth-submit-btn"
+      ></button>
+    </form>
+
+    <div class="auth-footer">
+      <span>Don't have an account?</span>
+      <a routerLink="/register" class="auth-text-link">Create one</a>
+    </div>
+  </div>
+</div>
+

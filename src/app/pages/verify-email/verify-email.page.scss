@@ -1,0 +1,55 @@
+@use '../login/login.page.scss';
+
+.otp-group {
+  margin: 0.5rem 0;
+
+  .otp-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 0.5rem;
+  }
+}
+
+:host ::ng-deep .auth-otp-input {
+  gap: 0.5rem;
+
+  .p-inputotp-input {
+    width: 44px;
+    height: 48px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-align: center;
+    border-radius: 8px;
+    border: 1px solid var(--tf-surface-300);
+    background: var(--tf-surface-0);
+    color: var(--tf-surface-900);
+
+    &:focus {
+      outline: none;
+      border-color: var(--tf-primary-500);
+      box-shadow: 0 0 0 2px var(--tf-primary-100);
+    }
+  }
+}
+
+.text-center {
+  text-align: center;
+}
+
+.resend-section {
+  text-align: center;
+  margin-top: 1.25rem;
+
+  .cooldown-text {
+    font-size: 0.85rem;
+    color: var(--tf-surface-500);
+  }
+
+  .resend-btn {
+    font-size: 0.85rem;
+    color: var(--tf-primary-600);
+    padding: 0;
+    cursor: pointer;
+  }
+}
+

@@ -1,0 +1,245 @@
+<!-- Page Header -->
+<header class="workspace-header">
+  <div class="view-heading">
+    <div class="title-row">
+      <i [class]="state.activeViewMeta().icon + ' view-title-icon'" aria-hidden="true"></i>
+      <h1>{{ state.activeViewMeta().title }}</h1>
+      <p-badge [value]="state.visibleTasks().length" severity="secondary" />
+    </div>
+    <p class="view-subtitle">{{ state.activeViewMeta().subtitle }}</p>
+  </div>
+
+  <div class="header-right">
+    <p-iconfield iconPosition="left" class="search-field">
+      <p-inputicon styleClass="pi pi-search" />
+      <input
+        #searchInput
+        pInputText
+        type="search"
+        [ngModel]="state.searchQuery()"
+        (ngModelChange)="state.searchQuery.set($event)"
+        placeholder="Search tasks... (/)"
+        aria-label="Search tasks by title or description"
+      />
+    </p-iconfield>
+
+    <p-button
+      icon="pi pi-refresh"
+      [outlined]="true"
+      severity="secondary"
+      [loading]="state.loading()"
+      pTooltip="Refresh tasks from Spring Boot server"
+      tooltipPosition="bottom"
+      ariaLabel="Refresh tasks"
+      (onClick)="state.loadTasks()"
+    />
+
+    <p-button label="New Task" icon="pi pi-plus" (onClick)="state.openCreateModal()" />
+  </div>
+</header>
+
+<!-- Tabs & Filter Controls -->
+<section class="tabs-and-controls" aria-label="Task Status Tabs and Filter Controls">
+  <div class="tabs-bar-row">
+    <p-tabs [value]="state.statusFilter()" (valueChange)="state.setStatusTab($event)">
+      <p-tablist>
+        <p-tab value="ALL">
+          <i class="pi pi-objects-column" aria-hidden="true"></i>
+          <span>All</span>
+          <span class="tab-counter">{{ state.tabCounts().ALL }}</span>
+        </p-tab>
+        <p-tab value="TODO">
+          <i class="pi pi-circle" aria-hidden="true"></i>
+          <span>To Do</span>
+          <span class="tab-counter">{{ state.tabCounts().TODO }}</span>
+        </p-tab>
+        <p-tab value="IN_PROGRESS">
+          <i class="pi pi-spinner" aria-hidden="true"></i>
+          <span>In Progress</span>
+          <span class="tab-counter">{{ state.tabCounts().IN_PROGRESS }}</span>
+        </p-tab>
+        <p-tab value="DONE">
+          <i class="pi pi-check-circle" aria-hidden="true"></i>
+          <span>Completed</span>
+          <span class="tab-counter">{{ state.tabCounts().DONE }}</span>
+        </p-tab>
+      </p-tablist>
+    </p-tabs>
+
+    <div class="toolbar-controls">
+      <p-togglebutton
+        [ngModel]="state.overdueOnlyFilter()"
+        (ngModelChange)="state.overdueOnlyFilter.set($event)"
+        onLabel="Overdue"
+        offLabel="Overdue"
+        onIcon="pi pi-exclamation-circle"
+        offIcon="pi pi-calendar-times"
+        size="small"
+        ariaLabel="Filter overdue tasks only"
+      />
+
+      <p-select
+        [options]="priorityFilterOptions"
+        [ngModel]="state.priorityFilter()"
+        (ngModelChange)="state.priorityFilter.set($event)"
+        optionLabel="label"
+        optionValue="value"
+        size="small"
+        ariaLabel="Filter by priority"
+      />
+
+      <p-select
+        [options]="sortOptions"
+        [ngModel]="state.sortBy()"
+        (ngModelChange)="state.sortBy.set($event)"
+        optionLabel="label"
+        optionValue="value"
+        size="small"
+        ariaLabel="Sort tasks by"
+      />
+
+      <p-togglebutton
+        [ngModel]="isAscending"
+        (ngModelChange)="onSortDirectionToggle($event)"
+        onLabel="Asc"
+        offLabel="Desc"
+        onIcon="pi pi-sort-amount-up"
+        offIcon="pi pi-sort-amount-down"
+        size="small"
+        ariaLabel="Toggle sort direction"
+      />
+
+      @if (state.activeView() !== 'completed' && state.activeView() !== 'all') {
+        <div class="inline-switch-group" pTooltip="Include completed tasks in this view" tooltipPosition="top">
+          <p-toggleswitch
+            inputId="toolbar-show-completed"
+            [ngModel]="state.showCompletedInViews()"
+            (ngModelChange)="state.setShowCompletedInViews($event)"
+          />
+          <label for="toolbar-show-completed">Show done</label>
+        </div>
+      }
+
+      @if (hasActiveFilters) {
+        <p-button
+          label="Reset"
+          icon="pi pi-filter-slash"
+          [text]="true"
+          severity="secondary"
+          size="small"
+          (onClick)="state.clearFilters()"
+        />
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Content -->
+<main class="content-container">
+  @if (state.apiError() && !state.isTaskModalOpen()) {
+    <div class="api-error-banner" role="alert">
+      <div class="err-left">
+        <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+        <span>{{ state.apiError() }}</span>
+      </div>
+      <p-button
+        label="Retry"
+        icon="pi pi-refresh"
+        severity="danger"
+        [outlined]="true"
+        size="small"
+        (onClick)="state.loadTasks()"
+      />
+    </div>
+  }
+
+  @if (state.activeView() !== 'completed' && state.statusFilter() !== 'DONE') {
+    <form class="inline-quick-add" (ngSubmit)="onQuickAddSubmit()">
+      <i class="pi pi-plus quick-plus-icon" aria-hidden="true"></i>
+      <input
+        type="text"
+        name="quickTitle"
+        [ngModel]="quickTitle()"
+        (ngModelChange)="quickTitle.set($event)"
+        [placeholder]="
+          state.activeView() === 'today'
+            ? 'Quickly add a task due today... (Press Enter)'
+            : 'Quickly add a task... (Press Enter, or N for full modal)'
+        "
+        maxlength="100"
+        aria-label="Quick add task title"
+      />
+      @if (quickTitle().trim().length > 0) {
+        <p-button
+          type="submit"
+          label="Add Task"
+          icon="pi pi-check"
+          size="small"
+          [loading]="state.submitting()"
+        />
+      }
+    </form>
+  }
+
+  @if (state.loading() && state.tasks().length === 0) {
+    <div class="task-surface" aria-busy="true" aria-label="Loading tasks">
+      @for (item of [1, 2, 3, 4]; track item) {
+        <div class="skeleton-row">
+          <p-skeleton shape="circle" size="1.25rem" />
+          <div class="sk-lines">
+            <p-skeleton width="45%" height="0.9rem" />
+            <p-skeleton width="28%" height="0.75rem" />
+          </div>
+          <p-skeleton width="4.5rem" height="1.4rem" borderRadius="6px" />
+        </div>
+      }
+    </div>
+  } @else if (state.visibleTasks().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon" aria-hidden="true">
+        <i [class]="hasActiveFilters ? 'pi pi-filter-slash' : 'pi pi-check-circle'"></i>
+      </div>
+      @if (hasActiveFilters) {
+        <h3>No tasks match your filters</h3>
+        <p>Try adjusting your search query, status tab, or priority filter.</p>
+        <p-button
+          label="Clear All Filters"
+          icon="pi pi-filter-slash"
+          severity="secondary"
+          [outlined]="true"
+          size="small"
+          (onClick)="state.clearFilters()"
+        />
+      } @else if (state.activeView() === 'today') {
+        <h3>You're all caught up for today</h3>
+        <p>Nothing is due today or overdue. Schedule a task or check your Inbox.</p>
+        <p-button label="Schedule Task for Today" icon="pi pi-plus" size="small" (onClick)="state.openCreateModal()" />
+      } @else if (state.activeView() === 'upcoming') {
+        <h3>No upcoming deadlines</h3>
+        <p>Tasks scheduled with future due dates will appear here automatically.</p>
+        <p-button label="Schedule Upcoming Task" icon="pi pi-calendar-plus" size="small" (onClick)="state.openCreateModal()" />
+      } @else if (state.activeView() === 'completed' || state.statusFilter() === 'DONE') {
+        <h3>No completed tasks yet</h3>
+        <p>Check off tasks as you finish them to build your completed log.</p>
+      } @else {
+        <h3>Your inbox is clear</h3>
+        <p>Capture what's on your mind and organize your priorities effortlessly.</p>
+        <p-button label="Create First Task" icon="pi pi-plus" size="small" (onClick)="state.openCreateModal()" />
+      }
+    </div>
+  } @else {
+    <div class="task-surface" role="list">
+      @for (task of state.visibleTasks(); track task.id) {
+        <app-task-row
+          [task]="task"
+          [compact]="state.compactDensity()"
+          (toggleComplete)="state.toggleComplete($event)"
+          (statusChange)="state.changeTaskStatus($event.task, $event.status)"
+          (edit)="state.openEditModal($event)"
+          (delete)="state.requestDelete($event.task, $event.event)"
+        />
+      }
+    </div>
+  }
+</main>
+
