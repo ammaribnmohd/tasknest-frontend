@@ -1,16 +1,16 @@
 <div class="auth-page-wrapper">
-  <div class="auth-card">
-    <div class="auth-header">
-      <div class="brand-badge">
+  <main class="auth-card" aria-labelledby="login-heading">
+    <header class="auth-header">
+      <div class="brand-badge" aria-hidden="true">
         <i class="pi pi-check-square"></i>
       </div>
-      <h1 class="auth-title">Welcome back</h1>
-      <p class="auth-subtitle">Sign in to your Taskflow workspace</p>
-    </div>
+      <h1 id="login-heading" class="auth-title">Welcome back</h1>
+      <p class="auth-subtitle">Sign in to your TaskNest workspace</p>
+    </header>
 
     @if (errorMessage()) {
-      <div class="auth-alert error-alert" role="alert">
-        <i class="pi pi-exclamation-circle"></i>
+      <div class="auth-alert error-alert" role="alert" aria-live="polite">
+        <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
         <span>{{ errorMessage() }}</span>
       </div>
     }
@@ -25,49 +25,64 @@
           formControlName="email"
           placeholder="name@example.com"
           class="auth-input"
-          [class.ng-invalid]="form.controls.email.invalid && form.controls.email.touched"
+          [class.is-invalid]="form.controls.email.invalid && form.controls.email.touched"
+          [attr.aria-invalid]="form.controls.email.invalid && form.controls.email.touched"
+          [attr.aria-describedby]="
+            form.controls.email.invalid && form.controls.email.touched ? 'email-error' : null
+          "
           autocomplete="email"
         />
         @if (form.controls.email.invalid && form.controls.email.touched) {
-          <small class="field-error">Enter a valid email address</small>
+          <small id="email-error" class="field-error" role="alert">
+            Enter a valid email address
+          </small>
         }
       </div>
 
       <div class="field-group">
         <div class="field-label-row">
           <label for="password" class="field-label">Password</label>
-          <a routerLink="/forgot-password" class="auth-text-link text-sm">Forgot password?</a>
+          <a routerLink="/forgot-password" class="auth-text-link auth-text-link--subtle">
+            Forgot password?
+          </a>
         </div>
         <p-password
-          id="password"
+          inputId="password"
           formControlName="password"
           [feedback]="false"
           [toggleMask]="true"
+          [fluid]="true"
           placeholder="Enter your password"
           styleClass="auth-password-wrapper"
-          inputStyleClass="auth-input"
+          [inputStyleClass]="
+            form.controls.password.invalid && form.controls.password.touched
+              ? 'auth-input is-invalid'
+              : 'auth-input'
+          "
           autocomplete="current-password"
         />
         @if (form.controls.password.invalid && form.controls.password.touched) {
-          <small class="field-error">Password is required</small>
+          <small id="password-error" class="field-error" role="alert">
+            Password is required
+          </small>
         }
       </div>
 
       <button
         pButton
         type="submit"
-        label="Sign In"
-        icon="pi pi-arrow-right"
+        [label]="isLoading() ? 'Signing in...' : 'Sign In'"
+        [icon]="isLoading() ? '' : 'pi pi-arrow-right'"
         iconPos="right"
         [loading]="isLoading()"
+        [disabled]="isLoading()"
         class="auth-submit-btn"
       ></button>
     </form>
 
-    <div class="auth-footer">
+    <footer class="auth-footer">
       <span>Don't have an account?</span>
       <a routerLink="/register" class="auth-text-link">Create one</a>
-    </div>
-  </div>
+    </footer>
+  </main>
 </div>
-

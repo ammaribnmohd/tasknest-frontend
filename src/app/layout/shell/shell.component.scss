@@ -1,10 +1,44 @@
 .workspace-layout {
+  position: relative;
+  isolation: isolate;
   display: flex;
   min-height: 100vh;
   background-color: var(--bg-app);
+
+  &::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: url('/images/auth-bg.jpg') center / cover no-repeat;
+    opacity: 0.22;
+    filter: invert(1) hue-rotate(180deg);
+    pointer-events: none;
+  }
+
+  &::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: radial-gradient(ellipse 75% 45% at 60% 0%, var(--accent-subtle), transparent 75%);
+    pointer-events: none;
+  }
+
+  app-sidebar {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+:host-context(.dark-mode) .workspace-layout::before {
+  opacity: 0.42;
+  filter: none;
 }
 
 .workspace-main {
+  position: relative;
+  z-index: 1;
   flex: 1;
   min-width: 0;
   display: flex;

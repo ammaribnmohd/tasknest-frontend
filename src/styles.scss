@@ -85,7 +85,7 @@ a[href]:focus-visible {
 .p-button {
   height: var(--control-height);
   font-weight: 600;
-  font-size: 13px;
+  font-size: 14px;
   border-radius: var(--radius-sm);
   transition: background-color var(--transition-fast), border-color var(--transition-fast),
     color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
@@ -98,7 +98,7 @@ a[href]:focus-visible {
 
 .p-button.p-button-sm {
   height: var(--control-height-sm);
-  font-size: 12.5px;
+  font-size: 13.5px;
 }
 
 .p-button.p-button-sm.p-button-icon-only {

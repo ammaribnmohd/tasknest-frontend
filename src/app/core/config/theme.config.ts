@@ -67,7 +67,7 @@ export const FONTS = {
   family: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
   /** Set to '' to skip loading a web font. */
   googleFontsUrl: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap',
-  sizeBase: '14px'
+  sizeBase: '15.5px'
 };
 
 export const LAYOUT = {
